@@ -6,3 +6,9 @@ export async function getPlayerByUUID(uuid: String) {
   console.log(rows);
   return rows;
 }
+export async function getPlayerLogin(uuid: String, password: String) {
+  const query = `SELECT id, uuid, nick, displayNick, permission, email, created_at FROM adventurer WHERE uuid=? and password=?`;
+  const [rows] = await (await connection).query(query, [uuid, password]);
+  console.log(rows);
+  return rows;
+}

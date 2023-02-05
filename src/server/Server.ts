@@ -5,7 +5,10 @@ import express from "express";
 const api = require("./api");
 const server = express();
 
-var bodyParser = require("body-parser");
+var bodyParser = require('body-parser')
+
+server.use(bodyParser.json())
+
 server.use(
   cors({
     allowedHeaders: ["sessionId", "Content-Type"],

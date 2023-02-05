@@ -1,5 +1,5 @@
 import express from "express";
-import { getPlayerByUUID } from "../services/UsersManager";
+import { getPlayerByUUID, getPlayerLogin } from "../services/UsersManager";
 
 const router = express.Router();
 
@@ -24,10 +24,26 @@ router.get("/adventurer/uuid/:id", async (req, res) => {
     if (!id.match(uuidRegex)) {
       return res.status(400).json({ err: "UUID inválido." });
     }
-    console.log("Chegou aq");
+    console.log("Chegou aq -> UUID");
     const response = await getPlayerByUUID(id);
     res.status(200).send(response);
   }
 });
+
+router.post("/adventurer/login/",async (req, res) => {
+  console.log(req.body);
+  const { id, senha } = req.body;
+  if(id && senha){
+      const uuidRegex=  
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+      if (!id.match(uuidRegex)) {
+        return res.status(400).json({ err: "UUID inválido." });
+      }
+      console.log("Chegou aq -> Senha");
+      
+      const data = await getPlayerLogin(id, senha);
+      res.status(200).send(data);
+  }
+})
 
 module.exports = router;
