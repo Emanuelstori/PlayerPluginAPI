@@ -5,9 +5,9 @@ import express from "express";
 const api = require("./api");
 const server = express();
 
-var bodyParser = require('body-parser')
+var bodyParser = require("body-parser");
 
-server.use(bodyParser.json())
+server.use(bodyParser.json());
 
 server.use(
   cors({
@@ -27,7 +27,9 @@ server.options(
   })
 );
 server.use("/api", api);
-server.get("/", (req, res) => res.send({ teste: "working" }).json());
+server.get("/", (req: express.Request, res: express.Response) =>
+  res.send({ teste: "working" }).json()
+);
 
 export { server };
 

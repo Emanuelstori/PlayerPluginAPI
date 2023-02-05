@@ -1,5 +1,6 @@
 import express from "express";
 import { getPlayerByUUID, getPlayerLogin } from "../services/UsersManager";
+import { hashed, verifyBcrypt } from "../utils/bcrypt";
 
 const router = express.Router();
 
@@ -10,6 +11,12 @@ router.use(function timeLogin(req, res, next) {
 
 router.get("/ping", (req, res) => {
   res.status(202).send({ Ping: "Pong" }).json();
+});
+
+router.get("/test", async (req, res) => {
+  const senha: string = await hashed("tested");
+  const result = await verifyBcrypt("tested", senha);
+  res.status(200).send(result);
 });
 
 router.get("/adventurers", async (req, res) => {
@@ -30,20 +37,20 @@ router.get("/adventurer/uuid/:id", async (req, res) => {
   }
 });
 
-router.post("/adventurer/login/",async (req, res) => {
+router.post("/adventurer/login/", async (req, res) => {
   console.log(req.body);
   const { id, senha } = req.body;
-  if(id && senha){
-      const uuidRegex=  
+  if (id && senha) {
+    const uuidRegex =
       /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
-      if (!id.match(uuidRegex)) {
-        return res.status(400).json({ err: "UUID inválido." });
-      }
-      console.log("Chegou aq -> Senha");
-      
-      const data = await getPlayerLogin(id, senha);
-      res.status(200).send(data);
+    if (!id.match(uuidRegex)) {
+      return res.status(400).json({ err: "UUID inválido." });
+    }
+    console.log("Chegou aq -> Senha");
+
+    const data = await getPlayerLogin(id, senha);
+    res.status(200).send(data);
   }
-})
+});
 
 module.exports = router;
