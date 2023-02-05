@@ -1,5 +1,9 @@
 import express from "express";
-import { getPlayerByUUID, getPlayerLogin } from "../services/UsersManager";
+import {
+  getPlayerByUUID,
+  getPlayerLogin,
+  registerPlayer
+} from "../services/UsersManager";
 import { hashed, verifyBcrypt } from "../utils/bcrypt";
 
 const router = express.Router();
@@ -33,24 +37,34 @@ router.get("/adventurer/nick/:nick", async (req, res) => {
 });
 
 router.post("/adventurer/login/", async (req, res) => {
-  console.log(req.body);
   const { nick, senha } = req.body;
   if (nick && senha) {
-    console.log("Chegou aq -> Senha");
-  
-    const data = await getPlayerLogin(nick, senha);
-    console.log(data.toString);
-
-    const jason = JSON.parse(data.toString());
-
-    console.log(jason);
-
-    const password = jason[0].password;
-
-    console.log(password);
-
-    res.status(200).send(data);
+    const data = await getPlayerLogin(nick);
+    if (await verifyBcrypt(senha, data.password)) {
+      res.status(200).send(true);
+    } else {
+      res.status(400).send(false);
+    }
   }
 });
 
+router.post("/adventurer/register/", async (req, res) => {
+  const { uuid, nick, password, displayNick, permission } = req.body;
+  if (uuid && nick && password && displayNick && permission) {
+    const senha: string = await hashed(password);
+    const data = await registerPlayer(
+      uuid,
+      nick,
+      senha,
+      displayNick,
+      permission
+    );
+    if (data.affectedRows === 1) {
+      res.status(200).send(true);
+    } else {
+      res.status(204).send(false);
+    }
+  }
+});
+//
 module.exports = router;
