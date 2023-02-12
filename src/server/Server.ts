@@ -2,7 +2,7 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 
-const api = require("./api");
+const api = require("../routes/api");
 const server = express();
 
 var bodyParser = require("body-parser");
